@@ -22,6 +22,7 @@ library(data.table)
 library(zoo)
 library(stringi)
 library(stringr)
+library(openxlsx)
 
 setwd("C:\\Users\\Lucky\\Documents\\Hospital_data\\04_2017_DOWNLOAD\\pat_txts\\MR027001_MR028000\\")
 files <- list.files(pattern ="fw*")
@@ -86,11 +87,12 @@ all_dose0 <- all_dose [V2 != "Diag__Type"]
 all_dose01 <- all_dose0 [nzchar(V2) & nzchar(V3) & nzchar(V4) & nzchar(V5)]
 
 
-write.table(all_dose, 
+
+fwrite(all_dose, 
             "C:\\Users\\Lucky\\Documents\\Hospital_data\\04_2017_DOWNLOAD\\pat_dbs\\adiag.csv", 
             row.names=FALSE, 
-            col.names=FALSE,
-            quote= FALSE)
+            col.names=FALSE)
+            
 
 
 all_dose2 <- all_dose0[!nzchar(V2),V2:=NA][,V20:=na.locf(V2), by =V1]
