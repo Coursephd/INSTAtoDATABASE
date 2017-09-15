@@ -171,8 +171,8 @@ all_dose <- fread("C:\\Users\\Lucky\\Documents\\Hospital_data\\04_2017_DOWNLOAD\
                   header=F, 
                   sep="@")
 
-all_dose0 <- head(all_dose, n = 25000)
-
+#all_dose0 <- head(all_dose, n = 25000)
+all_dose0 <- all_dose
 all_dose0 <- all_dose0 [, row :=0:.N ,by= V1]
 all_dose0 <- all_dose0 [V2 != "Sl.No"]
 
@@ -207,3 +207,8 @@ setnames(all_dose5, "V40", "Dosage")
 setnames(all_dose5, "V50", "Days")
 setnames(all_dose5, "V60", "Qty")
 setnames(all_dose5, "V70", "Remarks")
+
+all_dose6 <- all_dose5[,patid :=substr(all_dose5$Source, 1, 38), ]
+
+
+all_dose7 <- all_dose6[ Medicine_Name %like% c("Muri"), ]
