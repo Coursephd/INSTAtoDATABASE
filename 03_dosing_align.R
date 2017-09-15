@@ -98,8 +98,10 @@ all_dose <- fread("C:\\Users\\Lucky\\Documents\\Hospital_data\\04_2017_DOWNLOAD\
                   header=F, 
                   sep="@")
 
-all_dose0 <- all_dose [V2 != "Sl.No"]
-all_dose2 <- all_dose0[!nzchar(V2),V2:=NA][,V20:=na.locf(V2), by =V1]
+all_dose0 <- all_dose [, row :=0:.N ,by= V1]
+#all_dose0 <- all_dose [V2 != "Sl.No"]
+all_dose1 <- all_dose0[!nzchar(V2),V2:=NA]
+all_dose2 <- all_dose1[,V20:=na.locf0(V2,fromLast=FALSE), by =V1]
 all_dose3 <- all_dose2 [ , `:=` (V30 = paste(V3, collapse=" "),
                                 V40 = paste(V4, collapse=" "),
                                 V50 = paste(V5, collapse=" "),
@@ -115,3 +117,93 @@ setnames(all_dose5, "V50", "Days")
 setnames(all_dose5, "V60", "Qty")
 setnames(all_dose5, "V70", "Remarks")
 
+
+
+
+# Transposed version of the data to get correct combinations
+all_dose <- fread("C:\\Users\\Lucky\\Documents\\Hospital_data\\04_2017_DOWNLOAD\\pat_txts_mod\\all_aligndose.txt",
+                  header=F, 
+                  sep="@")
+
+all_dose0 <- all_dose [, row :=0:.N ,by= V1]
+all_dose0 <- all_dose0[, `:=`
+                       (rowc= paste( "new", str_pad(row, 3, side = "left", pad = 0), sep=""),
+                         V44 = paste("'", V4, sep="")), ]
+
+fwrite(all_dose0 [, c("V1", "V2", "V3", "V44", "V5", "V6", "V7", "row"),], 
+       "C:\\Users\\Lucky\\Documents\\Hospital_data\\04_2017_DOWNLOAD\\pat_dbs\\adose_work.csv", 
+       row.names=FALSE, 
+       col.names=FALSE,
+       quote="auto")
+
+
+# Create a file with manual intervention to udpate the Sl.No and then use the program
+# to combine rows
+adose_work <- fread("C:\\Users\\Lucky\\Documents\\Hospital_data\\04_2017_DOWNLOAD\\pat_dbs\\adose_work.csv",
+                  header=F  )
+
+all_dose0 <- adose_work [V2 != "Sl.No"]
+all_dose1 <- all_dose0[!nzchar(V2),V2:=NA]
+all_dose2 <- all_dose1[,V20:=na.locf0(V2,fromLast=FALSE), by =V1]
+all_dose3 <- all_dose2 [ , `:=` (V30 = paste(V3, collapse=" "),
+                                 V40 = paste(V4, collapse=" "),
+                                 V50 = paste(V5, collapse=" "),
+                                 V60 = paste(V6, collapse=" "),
+                                 V70 = paste(V7, collapse=" ") ), by =.(V1, V20)]
+all_dose4 <- all_dose3[ , c("V1", "V20", "V30", "V40", "V50", "V60", "V70"), with =FALSE]
+all_dose5 <- unique( all_dose4 )
+setnames(all_dose5, "V1", "Source")
+setnames(all_dose5, "V20", "Sl.No")
+setnames(all_dose5, "V30", "Medicine_Name")
+setnames(all_dose5, "V40", "Dosage")
+setnames(all_dose5, "V50", "Days")
+setnames(all_dose5, "V60", "Qty")
+setnames(all_dose5, "V70", "Remarks")
+
+
+
+
+##################
+# Copy Medicine name in blank lines
+#
+
+all_dose <- fread("C:\\Users\\Lucky\\Documents\\Hospital_data\\04_2017_DOWNLOAD\\pat_txts_mod\\all_aligndose.txt",
+                  header=F, 
+                  sep="@")
+
+all_dose0 <- head(all_dose, n = 25000)
+
+all_dose0 <- all_dose0 [, row :=0:.N ,by= V1]
+all_dose0 <- all_dose0 [V2 != "Sl.No"]
+
+all_dose01 <- all_dose0[, newv1 := ifelse (V2 != " " & !nchar(V3),  V2, ""), ]
+all_dose01 <- all_dose01[, newv1 := ifelse (V2 != " " & V3 != " " & newv1 != " ",  V2, newv1), ]
+all_dose01 <- all_dose01[, newv1 := ifelse (row == 1 ,  row, newv1), ]
+all_dose01 <- all_dose01[, `:=`( lagv7 = c(NA, V7[-.N]),
+                                 lagv3 = c(NA, V3[-.N])), by = V1]
+all_dose01 <- all_dose01[!nzchar(newv1), newv1:=NA]
+all_dose01 <- all_dose01[, newv2:=na.locf(newv1), by =V1]
+
+all_dose01 <- all_dose01[is.na(newv1), newv1 := "999"]
+all_dose01 <- all_dose01[, newv3:= ifelse(stri_trim(V7) != "" & stri_trim(lagv7) != "", as.numeric(newv2)+1, newv2), by =V1]
+#all_dose01 <- all_dose01[, newv3:= ifelse(stri_trim(V2) == "" & stri_trim(V3) != "", as.numeric(newv3)+1, newv3), ]
+
+all_dose01 <- all_dose01[, newv3:= ifelse(stri_trim(newv1) == "999" & stri_trim(lagv7) != "" & stri_trim(V3) != "", as.numeric(newv2)+1, newv3), by =V1]
+
+all_dose02 <- all_dose01[, newv4:= ifelse(stri_trim(newv2) == stri_trim(newv1), newv2, newv3), ]
+
+all_dose3 <- all_dose02 [ , `:=` (V30 = paste(V3, collapse=" "),
+                                 V40 = paste(V4, collapse=" "),
+                                 V50 = paste(V5, collapse=" "),
+                                 V60 = paste(V6, collapse=" "),
+                                 V70 = paste(V7, collapse=" ") ), by =.(V1, newv4)]
+all_dose4 <- all_dose3[ , c("V1", "newv4", "V30", "V40", "V50", "V60", "V70" ), with =FALSE]
+all_dose5 <- unique( all_dose4 )
+setnames(all_dose5, "V1", "Source")
+setnames(all_dose5, "newv4", "Group")
+#setnames(all_dose5, "V20", "Sl.No")
+setnames(all_dose5, "V30", "Medicine_Name")
+setnames(all_dose5, "V40", "Dosage")
+setnames(all_dose5, "V50", "Days")
+setnames(all_dose5, "V60", "Qty")
+setnames(all_dose5, "V70", "Remarks")
