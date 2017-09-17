@@ -208,7 +208,19 @@ setnames(all_dose5, "V50", "Days")
 setnames(all_dose5, "V60", "Qty")
 setnames(all_dose5, "V70", "Remarks")
 
-all_dose6 <- all_dose5[,patid :=substr(all_dose5$Source, 1, 38), ]
+all_dose6 <- all_dose5[, `:=`(patid =substr(all_dose5$Source, 1, 38),
+                              Dosage = paste("'", Dosage, sep="")), ]
+
+fwrite(all_dose6, 
+       "C:\\Users\\Lucky\\Documents\\Hospital_data\\04_2017_DOWNLOAD\\pat_dbs\\all_dose6.csv", 
+       row.names=FALSE, 
+       col.names=FALSE,
+       quote="auto")
 
 
-all_dose7 <- all_dose6[ Medicine_Name %like% c("Muri"), ]
+b01muri <- all_dose6[ tolower(Medicine_Name) %like% c("muri"), .(cnt = uniqueN(patid)),]
+b02bhasma <- all_dose6[ tolower(Medicine_Name) %like% c("bhasm"), .(cnt = uniqueN(patid)),]
+b03ashwagandha <- all_dose6 [tolower(Medicine_Name) %like% c("ashwagandha"), .(cnt = uniqueN(patid)),]
+b04triphala <- all_dose6 [tolower(Medicine_Name) %like% c("triphala"), .(cnt = uniqueN(patid)),]
+b05guggulu <- all_dose6 [tolower(Medicine_Name) %like% c("guggul"), .(cnt = uniqueN(patid)),]
+
