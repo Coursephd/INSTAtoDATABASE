@@ -174,7 +174,16 @@ setnames(compare, "outfld.x", "outfld")
 compare2 <- compare[, c("Source", "outfld", "outxls", "planned", "sourcepdf", "sourcetxt", "modtxt", "Noofurls"), ]
 compare2 <- compare2[, URLS :=ifelse(Noofurls == "6", "NODATA", "DATA-AVAILABLE"), ]
 
+# Count the number of patients having data available, vs. no data
 summary <- compare2[, .(cnt = uniqueN(Source)), by =.(outfld, URLS)]
 summary2 <- dcast(data = summary, 
                   outfld ~ URLS,
                   value.var = c("cnt"))
+
+# Find the distinct type of files present for each patient
+# Get the combinations of program numbers and then find the unique patient count
+# E.g. MR004001_MR005000 has 943 patients and 200 patients have only output type 7(lab data)
+
+types <- compare2 [planned > 0]
+types2 <- types[, outtype := paste(outxls, collapse=","), by = .(outfld, Source)]
+types3 <- types2 [, .(cnt = uniqueN(Source)), by = .(outfld, outtype)]
