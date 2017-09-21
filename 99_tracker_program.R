@@ -19,7 +19,7 @@ setwd ("C:\\Users\\Lucky\\Documents\\Hospital_data\\04_2017_DOWNLOAD\\emrurl\\")
 # This DT part is from01pat_url.R program
 # IF there is a change in that program then that needs to be accounted for
 # Create macro call for patients to get the source code
-DT <- data.table ( expand.grid (x=c(1:50000), outxls=c(1:20)) )
+DT <- data.table ( expand.grid (x=c(1:49000), outxls=c(1:20)) )
 
 DT <- DT[, x2 := paste( "MR", str_pad(x, 6, side = "left", pad = 0), sep=""), ]
 DT <- DT[ , `:=` (folder = ceiling(x / 1000),
@@ -170,5 +170,11 @@ compare <- merge(compare, act_txt, by = c("Source", "outxls"), all= TRUE)
 compare <- merge(compare, mod_txt, by = c("Source", "outxls"), all= TRUE)
 
 compare <- merge(compare, emrurl02, by = "Source", all= TRUE)
+setnames(compare, "outfld.x", "outfld")
+compare2 <- compare[, c("Source", "outfld", "outxls", "planned", "sourcepdf", "sourcetxt", "modtxt", "Noofurls"), ]
+compare2 <- compare2[, URLS :=ifelse(Noofurls == "6", "NODATA", "DATA-AVAILABLE"), ]
 
-compare2 <- compare[, c("Source", "outxls", "planned", "sourcepdf", "sourcetxt", "modtxt", "Noofurls"), ]
+summary <- compare2[, .(cnt = uniqueN(Source)), by =.(outfld, URLS)]
+summary2 <- dcast(data = summary, 
+                  outfld ~ URLS,
+                  value.var = c("cnt"))
