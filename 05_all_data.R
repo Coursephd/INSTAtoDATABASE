@@ -19,7 +19,9 @@ find . -name "data_*" -type f|xargs awk '{print FILENAME, @ $0}' > all_data.txt
 
 
 vinay@viany /cygdrive/c/Users/Lucky/Documents/Hospital_data/04_2017_DOWNLOAD/pat_txts_mod
-$ sed -f /cygdrive/c/Users/Lucky/Documents/Hospital_data/04_2017_DOWNLOAD/pgrm/replace_after.txt all_data.txt > all_data02.txt
+dos2unix /cygdrive/c/Users/Lucky/Documents/Hospital_data/04_2017_DOWNLOAD/pgrm/replace_after_new.txt
+
+$ sed -f /cygdrive/c/Users/Lucky/Documents/Hospital_data/04_2017_DOWNLOAD/pgrm/replace_after_new.txt all_data.txt > all_data02.txt
 
 library(data.table)
 library(zoo)
@@ -28,6 +30,16 @@ library(stringr)
 library(openxlsx)
 
 cat -n all_data.txt|head -n 100|tr -s " " " "|sed "s/:/<>/"|sed "s/Age\/Sex/Age_Sex/"
+
+unq <- unique( data03 [, c("VAR1"), ])
+chk33 <- unique( data03 [, c("VAR1", "VAR2"), ])
+chk33 <- chk33 [, newid := 1:.N, by = VAR1]
+
+chk34 <- dcast(data=chk33,
+               newid ~ VAR1,
+               fill=" ",
+               value.var = c("VAR2"))
+
 
 #@@D1@
 data <- fread("grep '@@D1@' c:/Users/Lucky/Documents/Hospital_data/04_2017_DOWNLOAD/pat_txts_mod/all_data02.txt",
@@ -107,11 +119,16 @@ data <- fread("grep '@@D5@' c:/Users/Lucky/Documents/Hospital_data/04_2017_DOWNL
               sep="!", 
               header= FALSE)
 
-data02 <- data [, c("TMP1", "TMP2", "TMP3", "TMP4", "TMP5") := tstrsplit(stri_trim(V1), "@", fixed=TRUE),]
+data0 <- data [!V1 %like% c("<><>")]
+
+data02 <- data0 [, c("TMP1", "TMP2", "TMP3", "TMP4", "TMP5") := tstrsplit(stri_trim(V1), "@", fixed=TRUE),]
 
 # Fix the problems with the file
+data02 <- data02[, .(V1, TMP1, TMP2, TMP3, TMP4, TMP5,  
+                     splitted =unlist(strsplit(TMP5, "><"))) ,
+                 by=seq_len(nrow(data02))]
 
-data03 <- data02 [, c("VAR1","VAR2") := tstrsplit(stri_trim(TMP5), "<>", fixed=TRUE), ]
+data03 <- data02 [, c("VAR1","VAR2") := tstrsplit(stri_trim(splitted), "<>", fixed=TRUE), ]
 data03 <- data03 [, `:=`(VAR1 = stri_replace_all(toupper(VAR1), fixed = " ",""),
                          Source = substr(TMP1, 26, 33)),]
 
@@ -131,8 +148,12 @@ data <- fread("grep '@@D7@' c:/Users/Lucky/Documents/Hospital_data/04_2017_DOWNL
 data02 <- data [, c("TMP1", "TMP2", "TMP3", "TMP4", "TMP5") := tstrsplit(stri_trim(V1), "@", fixed=TRUE),]
 
 # Fix the problems with the file
+# Fix the problems with the file
+data02 <- data02[, .(V1, TMP1, TMP2, TMP3, TMP4, TMP5,  
+                     splitted =unlist(strsplit(TMP5, "><"))) ,
+                 by=seq_len(nrow(data02))]
 
-data03 <- data02 [, c("VAR1","VAR2") := tstrsplit(stri_trim(TMP5), "<>", fixed=TRUE), ]
+data03 <- data02 [, c("VAR1","VAR2") := tstrsplit(stri_trim(splitted), "<>", fixed=TRUE), ]
 data03 <- data03 [, `:=`(VAR1 = stri_replace_all(toupper(VAR1), fixed = " ",""),
                          Source = substr(TMP1, 26, 33)),]
 
