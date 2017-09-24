@@ -1,0 +1,13 @@
+s/  */ /g
+s/:/<>/
+s/Age\/Sex/Age_Sex/
+s/Facies/\Facies<>/g
+s/Immunization/Immunization<>/g
+s/Sleep/Nidra<>/g
+s/Appt/Appetite<>/g
+s/JaranaShakti:/><Jarana Shakti<>/g
+s/VyayamaShakti:/><Vyayama Shakti<>/g
+s/Madhyamavastha:/><Madhyamavastha<>/g
+s/AbhyavaharanaShakti:/><Abhyavaharana Shakti<>/g
+s/Baalyavastha:/><Baalyavastha<>/g
+/@$/d

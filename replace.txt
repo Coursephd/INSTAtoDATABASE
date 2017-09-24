@@ -1,0 +1,202 @@
+s/ :/:/g
+s/Service Name:/\n@D2@Ayur@Service Name:/g
+s/Qty Ordered:/\n@D2@Ayur@Qty Ordered:/g
+s/Service Department:/\n@D2@Ayur@Service Department:/g
+s/Completed:/\n@D2@Ayur@Completed:/g
+s/Conducted By:/\n@D2@Ayur@Conducted By:/g
+s/Remarks:/\n@D2@Ayur@Remarks:/g
+s/Conducted Date:/\n@D2@Ayur@Conducted Date:/g
+/Page/d
+/Signature/,+1d
+
+
+#Therapies:|Medicines:|Internal Medicines:|External Treatments:
+
+s/DISCHARGE SUMMARY/\n@DISCHARGE SUMMARY/g
+s/DISCHARGE MEDICINES/\n@DISCHARGE MEDICINES/g
+s/External Treatments/\n@External Treatments/g
+s/Internal medicines/\n@Internal medicines/g
+s/Therapies/\n@Therapies/g
+
+s/^Name:/\n@D1@Demog@Name:/g
+s/MR No:/\n@D1@Demog@MR No:/g
+s/Age\/Sex:/\n@D1@Demog@Age\/Sex:/g
+s/Age\/Gender:/\n@D1@Demog@Age\/Sex:/g
+s/Address:/\n@D1@Demog@Address:/g
+s/Visit ID:/\n@D1@Demog@Visit ID:/g
+s/Visit Date:/\n@D1@Demog@Visit Date:/g
+s/Department:/\n@D1@Demog@Department:/g
+s/Doctor:/\n@D1@Demog@Doctor:/g
+s/Rate/\n@D1@Demog@Rate:/g
+s/Plan:/\n@D1@Demog@Plan:/g
+s/Consulting Doctor:/\n@D1@Demog@Consulting Doctor:/g
+s/Admission Date:/\n@D1@Demog@Admission Date:/g
+s/Discharge Date:/\n@D1@Demog@Discharge Date:/g
+  
+s/Session Start Time:/\n@D1@Demog@Session Start Time:/g
+s/Session End Time:/\n@D1@Demog@Session End Time:/g
+s/Screening Doctor:/\n@D1@Demog@Screening Doctor:/g
+s/H\/o menstruation\/menopause:/\n@D1@Demog@menstruation_menopause:/g
+
+s/Dosha:/\n@D3@Samprapti Ghatakas@Dosha:/g
+s/Dooshya:/\n@D3@Samprapti Ghatakas@Dooshya:/g
+s/Srotas:/\n@D3@Samprapti Ghatakas@Srotas:/g	
+s/Sroto Dushti:/\n@D3@Samprapti Ghatakas@Sroto Dushti:/g	
+s/Roga Marga:/\n@D3@Samprapti Ghatakas@Roga Marga:/g	
+s/Sadhya Asadhyata:/\n@D3@Samprapti Ghatakas@Sadhya Asadhyata:/g
+
+s/Complaint:/\n@D1@Demog@Complaint:/g
+s/Source of History:/\n@D1@Demog@Source of History:/g
+
+s/Marital Status:/\n@D4@OBG Gyn History@Marital Status:/g
+s/Menstrual Cycle:/\n@D4@OBG Gyn History@Menstrual Cycle:/g
+s/Characteristics:/\n@D4@OBG Gyn History@Characteristics:/g
+
+#s/Chief Complaint & Duration:/\n@Chief Complaint & Duration:/g
+s/Chief Complaint with Onset & Duration:/\n@Chief Complaint with Onset & Duration:/g
+s/Associated Complaint with Onset & Duration:/\n@Associated Complaint with Onset & Duration:/g
+s/Medical History:/\n@D5@MH@Medical History:/g
+s/Family History:/\n@D5@MH@Family History:/g
+s/Past History:/\n@D5@MH@Past History:/g
+s/Personal History:/\n@D5@MH@Personal History:/g
+s/Surgical History:/\n@D5@MH@Surgical History:/g
+s/Diagnostic History:/\n@D5@MH@Diagnostic History:/g
+s/Psychological & Occupational History:/\n@D5@MH@Psychological & Occupational History:/g
+s/Psychological & Occupational History :/\n@D5@MH@Psychological & Occupational History:/g
+s/Birth History:/\n@D5@MH@Birth History:/g
+s/Growth and development History:/\n@D5@MH@Growth and development History:/g
+
+s/Immunization/\n@D5@MH@Immunization/g
+s/Established Patient:/\n@D1@Demog@Established Patient:/g
+
+s/Allopathic Diagnosis:/\n@D5@MH@Allopathic Diagnosis:/g
+
+s/Diabetes/\n@D5@MH@Diabetes:/g
+s/Hypertension/\n@D5@MH@Hypertension:/g
+s/Appetite/\n@D5@MH@Appetite:/g
+s/Micturation/\n@D5@MH@Micturation:/g
+s/Sleep/\n@D5@MH@Sleep:/g
+
+s/Ahara/\n@D5@MH@Ahara:/g
+s/Vihara/\n@D5@MH@Vihara:/g
+s/Appt/\n@D5@MH@Appt:/g
+s/Nidra/\n@D5@MH@Nidra:/g
+s/Vyayama-/\n@D5@MH@Vyayama:/g
+s/Mala/\n@D5@MH@Mala:/g
+s/Mutra/\n@D5@MH@Mutra:/g
+s/Madakari Dravya Abhyasa/\n@D5@MH@Madakari Dravya Abhyasa:/g
+
+s/Rogi Bala:/\n@D7@Nidan Panchak@Rogi Bala:/g	
+s/Nidana:/\n@D7@Nidan Panchak@Nidana:/g	
+s/Roopa:/\n@D7@Nidan Panchak@Roopa:/g	
+s/Poorvaroopa/\n@D7@Nidan Panchak@Poorvaroopa:/g	
+s/Lakshana:/\n@D7@Nidan Panchak@Lakshana:/g
+s/SrotoDushti:/\n@D7@Nidan Panchak@SrotoDushti:/g
+
+#Dashavidha Pareeksha
+s/Prakruti:/\n@D8@Dashavidha Pareeksha@Prakruti:/g
+s/Vikruti:/\n@D8@Dashavidha Pareeksha@Vikruti:/g
+s/Sara:/\n@D8@Dashavidha Pareeksha@Sara:/g
+s/Samhanana:/\n@D8@Dashavidha Pareeksha@Samhanana:/g
+s/Satva:/\n@D8@Dashavidha Pareeksha@Satva:/g
+s/Satmya:/\n@D8@Dashavidha Pareeksha@Saymya:/g
+s/Abhyavaharana Shakti:/\n@D8@Dashavidha Pareeksha@Abhyavaharana Shakti:/g
+s/Jarana Shakti:/\n@D8@Dashavidha Pareeksha@Jarana Shakti:/g
+s/Vyayama Shakti:/\n@D8@Dashavidha Pareeksha@Vyayama Shakti:/g
+s/Vayas:/\n@D8@Dashavidha Pareeksha@Vayas:/g
+s/Vruddhavastha:/\n@D8@Dashavidha Pareeksha@Vruddhavastha:/g
+
+s/VN:/\n@D9@EYE@VN:/g
+s/NV:/\n@D9@EYE@NV:/g
+s/VRx:/\n@D9@EYE@VRx:/g
+
+s/Neurological/\n@D10@EXAM@Neurological:/g
+s/Speech/\n@D10@EXAM@Speech:/g
+s/Appearence/\n@D10@EXAM@Appearence:/g
+s/Motor/\n@D10@EXAM@Motor:/g
+s/Tone/\n@D10@EXAM@Tone:/g
+s/Reflex/\n@D10@EXAM@Reflex:/g
+s/Power/\n@D10@EXAM@Power:/g
+s/Gait/\n@D10@EXAM@Gait:/g
+s/Coordination/\n@D10@EXAM@Coordination:/g
+s/Cardiovascular/\n@D10@EXAM@Cardiovascular:/g
+s/Respiratory/\n@D10@EXAM@Respiratory:/g
+s/Gastrointestinal/\n@D10@EXAM@Gastrointestinal:/g
+s/Musculoskeletal/\n@D10@EXAM@Musculoskeletal:/g
+s/Prescription Notes:/\n@D11@Prescription Notes:/g
+s/Doctor's Notes:/\n@D11@Doctor's Notes:/g
+
+s/Appearance/\n@D1@Demog@Appearance:/g
+s/Body Built/\n@D1@Demog@Body Built:/g
+s/Body Strength/\n@D1@Demog@Body Strength:/g
+s/Orientation/\n@D1@Demog@Orientation:/g
+s/Conciousness/\n@D1@Demog@Conciousness:/g
+s/Pallor/\n@D1@Demog@Pallor:/g
+s/Icterus/\n@D1@Demog@Icterus:/g
+s/Jaundice/\n@D1@Demog@Jaundice:/g
+s/Odema/\n@D1@Demog@Odema:/g
+s/Lymphadenopathy/\n@D1@Demog@Lymphadenopathy:/g
+s/Nourishment/\n@D1@Demog@Nourishment:/g
+s/Posture/\n@D1@Demog@Posture:/g
+s/Mental State/\n@D1@Demog@Mental State:/g
+s/Facies/\n@D1@Demog@Facies/g
+
+s/Diet Type:/\n@D12@IP - Nutitional Assessment@Diet Type:/g
+s/Appetite (Subject View):/\n@D12@IP - Nutitional Assessment@Appetite (Subject View):/g
+s/Jihwa:/\n@D12@IP - Nutitional Assessment@Jihwa:/g
+
+s/Unexplained Weight loss:/\n@D12@IP - Nutitional Assessment@Unexplained Weight loss:/g
+s/Unexplained Weightloss:/\n@D12@IP - Nutitional Assessment@Unexplained Weight loss:/g
+s/UnexplainedWeight loss:/\n@D12@IP - Nutitional Assessment@Unexplained Weight loss:/g
+
+s/Is on Restricted Diet:/\n@D12@IP - Nutitional Assessment@Is on Restricted Diet:/g
+s/Is on RestrictedDiet:/\n@D12@IP - Nutitional Assessment@Is on RestrictedDiet:/g
+s/Ison Restricted Diet:/\n@D12@IP - Nutitional Assessment@Is on RestrictedDiet:/g
+s/Is onRestricted Diet:/\n@D12@IP - Nutitional Assessment@Is on RestrictedDiet:/g
+
+s/Chronic illness/\n@D12@IP - Nutitional Assessment@Chronic illness/g
+s/Chronicillness/\n@D12@IP - Nutitional Assessment@Chronic illness/g
+
+s/Consultant Dietic Restrictions:/\n@D12@IP - Nutitional Assessment@Consultant Dietic Restrictions:/g
+s/Consultant Dietic Restrictions:/\n@D12@IP - Nutitional Assessment@Consultant Dietic Restrictions:/g
+s/Consultant DieticRestrictions:/\n@D12@IP - Nutitional Assessment@Consultant Dietic Restrictions:/g
+
+s/Diet chart/\n@D12@IP - Nutitional Assessment@Diet chart given to Pt:/g
+s/GeneralDietic restrictions:/\n@D12@IP - Nutitional Assessment@Consultant Dietic Restrictions:/g
+s/General Dietic restrictions:/\n@ID12@P - Nutitional Assessment@Consultant Dietic Restrictions:/g
+s/General Dieticrestrictions:/\n@D12@IP - Nutitional Assessment@Consultant Dietic Restrictions:/g
+
+s/SNF Score (scale of 1-10):/\n@D12@IP - Nutitional Assessment@SNF Score (scale of 1-10):/g
+s/Difficulty in swallowing:/\n@D12@IP - Nutitional Assessment@Difficulty in swallowing:/g
+s/Difficulty inswallowing:/\n@D12@IP - Nutitional Assessment@Difficulty in swallowing:/g
+
+s/Inborn metabolic errors:/\n@D12@IP - Nutitional Assessment@Inborn metabolic errors:/g
+s/Inborn metabolicerrors:/\n@D12@IP - Nutitional Assessment@Inborn metabolic errors:/g
+s/Inbornmetabolic errors:/\n@D12@IP - Nutitional Assessment@Inborn metabolic errors:/g
+
+s/Intake of:/\n@D12@IP - Nutitional Assessment@Intake of:/g
+
+s/Frequency of Re/\n@D12@IP - Nutitional Assessment@Frequency of Re/g
+s/Frequency ofRe/\n@D12@IP - Nutitional Assessment@Frequency of Re/g
+s/Frequencyof Re/\n@D12@IP - Nutitional Assessment@Frequency of Re/g
+
+s/Long term/\n@D12@IP - Nutitional Assessment@Long term/g
+s/Longterm/\n@D12@IP - Nutitional Assessment@Long term/g
+
+#:a;N;$!ba;s/Prescriptions\+\n/Prescriptions/g
+#N;s/Prescriptions+\n/Prescriptions/g                  # Keep this line as the first line otherwise the rest of the code does not work
+#/Past/,/^$/p
+#########################################################
+#sed -n '/Past/,/^$/p' MR000043_5_1442825400000_3.txt # This should give the Subset for each section 
+#########################################################
+#sed 'N;s/\n/ /g' # Combine lines onto 1 line
+
+#perl -ne 'if (!/^$/) { chomp } else { print "\n" } print' MR005006_0004_09APR2013_3.txt # Merge paragraphs based on text seperated by blank lines
+
+# sed -n '/Past/,/^$/p' MR000043_5_1442825400000_3.txt|sed 'N;s/\n/ /g' 
+
+#sed -n '/Past/,/^$/p' MR000043_5_1442825400000_3.txt|
+
+#sed -n '/Medicine Name/,/^$/p' MR005006_0004_09APR2013_3.txt|more
+
+#grep "Medicine Name" MR005006_0004_09APR2013_3.txt|sed 's/Medicine Name/MedicineName/	'g|tr ":" "\n"|fold -w1|cat -n|more
