@@ -118,7 +118,7 @@ data04 <- dcast(data=chk,
 data <- fread("grep '@@D5@' c:/Users/Lucky/Documents/Hospital_data/04_2017_DOWNLOAD/pat_txts_mod/all_data02.txt",
               sep="!", 
               header= FALSE)
-
+data <- data [, V1 := toupper(V1), ]
 data0 <- data [!V1 %like% c("<><>")]
 
 data02 <- data0 [, c("TMP1", "TMP2", "TMP3", "TMP4", "TMP5") := tstrsplit(stri_trim(V1), "@", fixed=TRUE),]
@@ -145,7 +145,9 @@ data <- fread("grep '@@D7@' c:/Users/Lucky/Documents/Hospital_data/04_2017_DOWNL
               sep="!", 
               header= FALSE)
 
-data02 <- data [, c("TMP1", "TMP2", "TMP3", "TMP4", "TMP5") := tstrsplit(stri_trim(V1), "@", fixed=TRUE),]
+data0 <- data [!V1 %like% c("<><>")]
+
+data02 <- data0 [, c("TMP1", "TMP2", "TMP3", "TMP4", "TMP5") := tstrsplit(stri_trim(V1), "@", fixed=TRUE),]
 
 # Fix the problems with the file
 # Fix the problems with the file
