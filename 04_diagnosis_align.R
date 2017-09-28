@@ -43,7 +43,7 @@ all_dose <- fread("C:\\Users\\Lucky\\Documents\\Hospital_data\\04_2017_DOWNLOAD\
                   fill=TRUE)
 
 all_dose0 <- all_dose [V2 != "Diag__Type"]
-all_dose01 <- all_dose0 [nzchar(V2) & nzchar(V3) & nzchar(V4) & nzchar(V5)]
+#all_dose01 <- all_dose0 [nzchar(V2) & nzchar(V3) & nzchar(V4) & nzchar(V5)]
 
 all_dose01 <- all_dose0 [ stri_trim(V2) != "" & stri_trim(V3) != "" & stri_trim(V4) != "" ]
 all_dose01 <- unique( all_dose01)
