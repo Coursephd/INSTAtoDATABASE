@@ -1,5 +1,5 @@
 
-# Create the dosing related aligned table
+# Create the diagnosis related aligned table
 
 # The UNIX code:
 
@@ -23,6 +23,42 @@ library(zoo)
 library(stringi)
 library(stringr)
 library(openxlsx)
+
+# Execute the file to get the aligned text files
+# mv awk_diag.txt awk_diag.sh
+# parallel --progress -j500  -eta ::: 'bash awk_diag.sh' -- Tried but does not work
+# bash awk_diag.sh
+
+# These files have "@" symbol, which should be removed
+1  ./MR034001_MR035000/diag_MR034565_0002_19AUG2015_3.txt
+2  ./MR034001_MR035000/diag_MR034565_0003_19AUG2015_3.txt
+3  ./MR040001_MR041000/diag_MR040873_0001_01JUN2016_3.txt
+
+# Run the AWK code to get all the aligned files into 1 file
+find . -name "aligndiag*"|xargs awk '{print FILENAME "@" $0}' >all_aligndiag.txt
+
+all_dose <- fread("C:\\Users\\Lucky\\Documents\\Hospital_data\\04_2017_DOWNLOAD\\pat_txts_mod\\all_aligndiag.txt",
+                  header=F, 
+                  sep="@",
+                  fill=TRUE)
+
+all_dose0 <- all_dose [V2 != "Diag__Type"]
+all_dose01 <- all_dose0 [nzchar(V2) & nzchar(V3) & nzchar(V4) & nzchar(V5)]
+
+all_dose01 <- all_dose0 [ stri_trim(V2) != "" & stri_trim(V3) != "" & stri_trim(V4) != "" ]
+all_dose01 <- unique( all_dose01)
+
+all_dose01 <- all_dose01 [ , cnt :=1:.N, by =.(V1, V2)]
+all_dose01 <- all_dose01 [, `:=` (MRNo = substr(V1, 31, 38),
+                                  Visit = substr(V1, 40, 43),
+                                  Date = substr(V1, 45, 53)), ]
+
+fwrite(all_dose, 
+       "C:\\Users\\Lucky\\Documents\\Hospital_data\\04_2017_DOWNLOAD\\pat_dbs\\adiag.csv", 
+       row.names=FALSE, 
+       col.names=FALSE)
+
+##################################################################################################
 
 setwd("C:\\Users\\Lucky\\Documents\\Hospital_data\\04_2017_DOWNLOAD\\pat_txts\\MR027001_MR028000\\")
 files <- list.files(pattern ="fw*")
@@ -64,50 +100,4 @@ write.table(chk471$code,
             row.names=FALSE, 
             col.names=FALSE,
             quote= FALSE)
-
-# Execute the file to get the aligned text files
-# mv awk_diag.txt awk_diag.sh
-# parallel --progress -j500  -eta ::: 'bash awk_diag.sh' -- Tried but does not work
-# bash awk_diag.sh
-
-# These files have "@" symbol, which should be removed
-1  ./MR034001_MR035000/diag_MR034565_0002_19AUG2015_3.txt
-2  ./MR034001_MR035000/diag_MR034565_0003_19AUG2015_3.txt
-3  ./MR040001_MR041000/diag_MR040873_0001_01JUN2016_3.txt
-
-# Run the AWK code to get all the aligned files into 1 file
-find . -name "aligndiag*"|xargs awk '{print FILENAME "@" $0}' >all_aligndiag.txt
-
-all_dose <- fread("C:\\Users\\Lucky\\Documents\\Hospital_data\\04_2017_DOWNLOAD\\pat_txts_mod\\all_aligndiag.txt",
-                  header=F, 
-                  sep="@",
-                  fill=TRUE)
-
-all_dose0 <- all_dose [V2 != "Diag__Type"]
-all_dose01 <- all_dose0 [nzchar(V2) & nzchar(V3) & nzchar(V4) & nzchar(V5)]
-
-
-
-fwrite(all_dose, 
-            "C:\\Users\\Lucky\\Documents\\Hospital_data\\04_2017_DOWNLOAD\\pat_dbs\\adiag.csv", 
-            row.names=FALSE, 
-            col.names=FALSE)
-            
-
-
-all_dose2 <- all_dose0[!nzchar(V2),V2:=NA][,V20:=na.locf(V2), by =V1]
-all_dose3 <- all_dose2 [ , `:=` (V30 = paste(V3, collapse=" "),
-                                 V40 = paste(V4, collapse=" "),
-                                 V50 = paste(V5, collapse=" "),
-                                 V60 = paste(V6, collapse=" "),
-                                 V70 = paste(V7, collapse=" ") ), by =.(V1, V20)]
-all_dose4 <- all_dose3[ , c("V1", "V20", "V30", "V40", "V50", "V60", "V70"), with =FALSE]
-all_dose5 <- unique( all_dose4 )
-setnames(all_dose5, "V1", "Source")
-setnames(all_dose5, "V20", "Sl.No")
-setnames(all_dose5, "V30", "Medicine_Name")
-setnames(all_dose5, "V40", "Dosage")
-setnames(all_dose5, "V50", "Days")
-setnames(all_dose5, "V60", "Qty")
-setnames(all_dose5, "V70", "Remarks")
 
