@@ -47,10 +47,17 @@ data <- fread("grep '@@D1@' c:/Users/Lucky/Documents/Hospital_data/04_2017_DOWNL
               sep="!", 
               header= FALSE)
 
-data02 <- data [, c("TMP1", "TMP2", "TMP3", "TMP4", "TMP5") := tstrsplit(stri_trim(V1), "@", fixed=TRUE),]
+data0 <- data [!V1 %like% c("<><>")]
 
-data03 <- data02 [, c("VAR1","VAR2") := tstrsplit(stri_trim(TMP5), "<>", fixed=TRUE, keep=c(1,2)), ]
-data03 <- data03 [, `:=`(VAR1 = stri_replace_all(toupper(VAR1), fixed = " ",""),
+data02 <- data0 [, c("TMP1", "TMP2", "TMP3", "TMP4", "TMP5") := tstrsplit(stri_trim(V1), "@", fixed=TRUE),]
+
+# Fix the problems with the file
+data02 <- data02[, .(V1, TMP1, TMP2, TMP3, TMP4, TMP5,  
+                     splitted =unlist(strsplit(TMP5, "><"))) ,
+                 by=seq_len(nrow(data02))]
+
+data03 <- data02 [, c("VAR1","VAR2") := tstrsplit(stri_trim(splitted), "<>", fixed=TRUE), ]
+data03 <- data03 [, `:=`(VAR1 = stri_replace_all(VAR1, fixed = " ",""),
                          Source = substr(TMP1, 26, 33)),]
 
 chk <- data03[, cnt :=1:.N, by =.(TMP1, VAR1)]
@@ -58,16 +65,32 @@ data04 <- dcast(data=chk,
                 Source + cnt + TMP1 + TMP3 + TMP4 ~ VAR1,
                 fill=" ",
                 value.var = c("VAR2"))
+
+chk99 <- chk [, VAR22 := paste(VAR2, collapse = ","), by =.(TMP1, VAR1)]
+chk999 <- unique( chk99 [, c("Source", "TMP1", "TMP3", "TMP4", "VAR1", "VAR22"), ])
+data044 <- dcast(data=chk999,
+                 Source + TMP1 + TMP3 + TMP4 ~ VAR1,
+                 fill=" ",
+                 value.var = c("VAR22"))
+
+#substr(chk34$ADMISSIONDATE, 1, 17)
 
 #@@D2@
 data <- fread("grep '@@D2@' c:/Users/Lucky/Documents/Hospital_data/04_2017_DOWNLOAD/pat_txts_mod/all_data022.txt",
               sep="!", 
               header= FALSE)
 
-data02 <- data [, c("TMP1", "TMP2", "TMP3", "TMP4", "TMP5") := tstrsplit(stri_trim(V1), "@", fixed=TRUE),]
+data0 <- data [!V1 %like% c("<><>")]
 
-data03 <- data02 [, c("VAR1","VAR2") := tstrsplit(stri_trim(TMP5), "<>", fixed=TRUE, keep=c(1,2)), ]
-data03 <- data03 [, `:=`(VAR1 = stri_replace_all(toupper(VAR1), fixed = " ",""),
+data02 <- data0 [, c("TMP1", "TMP2", "TMP3", "TMP4", "TMP5") := tstrsplit(stri_trim(V1), "@", fixed=TRUE),]
+
+# Fix the problems with the file
+data02 <- data02[, .(V1, TMP1, TMP2, TMP3, TMP4, TMP5,  
+                     splitted =unlist(strsplit(TMP5, "><"))) ,
+                 by=seq_len(nrow(data02))]
+
+data03 <- data02 [, c("VAR1","VAR2") := tstrsplit(stri_trim(splitted), "<>", fixed=TRUE), ]
+data03 <- data03 [, `:=`(VAR1 = stri_replace_all(VAR1, fixed = " ",""),
                          Source = substr(TMP1, 26, 33)),]
 
 chk <- data03[, cnt :=1:.N, by =.(TMP1, VAR1)]
@@ -75,6 +98,13 @@ data04 <- dcast(data=chk,
                 Source + cnt + TMP1 + TMP3 + TMP4 ~ VAR1,
                 fill=" ",
                 value.var = c("VAR2"))
+
+chk99 <- chk [, VAR22 := paste(VAR2, collapse = ","), by =.(TMP1, VAR1)]
+chk999 <- unique( chk99 [, c("Source", "TMP1", "TMP3", "TMP4", "VAR1", "VAR22"), ])
+data044 <- dcast(data=chk999,
+                 Source + TMP1 + TMP3 + TMP4 ~ VAR1,
+                 fill=" ",
+                 value.var = c("VAR22"))
 
 
 # @D3
@@ -82,12 +112,17 @@ data <- fread("grep '@@D3@' c:/Users/Lucky/Documents/Hospital_data/04_2017_DOWNL
       sep="!", 
       header= FALSE)
 
-data02 <- data [, c("TMP1", "TMP2", "TMP3", "TMP4", "TMP5") := tstrsplit(stri_trim(V1), "@", fixed=TRUE),]
+data0 <- data [!V1 %like% c("<><>")]
+
+data02 <- data0 [, c("TMP1", "TMP2", "TMP3", "TMP4", "TMP5") := tstrsplit(stri_trim(V1), "@", fixed=TRUE),]
 
 # Fix the problems with the file
+data02 <- data02[, .(V1, TMP1, TMP2, TMP3, TMP4, TMP5,  
+                     splitted =unlist(strsplit(TMP5, "><"))) ,
+                 by=seq_len(nrow(data02))]
 
-data03 <- data02 [, c("VAR1","VAR2") := tstrsplit(stri_trim(TMP5), "<>", fixed=TRUE), ]
-data03 <- data03 [, `:=`(VAR1 = stri_replace_all(toupper(VAR1), fixed = " ",""),
+data03 <- data02 [, c("VAR1","VAR2") := tstrsplit(stri_trim(splitted), "<>", fixed=TRUE), ]
+data03 <- data03 [, `:=`(VAR1 = stri_replace_all(VAR1, fixed = " ",""),
                          Source = substr(TMP1, 26, 33)),]
 
 chk <- data03[, cnt :=1:.N, by =.(TMP1, VAR1)]
@@ -95,18 +130,32 @@ data04 <- dcast(data=chk,
                 Source + cnt + TMP1 + TMP3 + TMP4 ~ VAR1,
                 fill=" ",
                 value.var = c("VAR2"))
+
+chk99 <- chk [, VAR22 := paste(VAR2, collapse = ","), by =.(TMP1, VAR1)]
+chk999 <- unique( chk99 [, c("Source", "TMP1", "TMP3", "TMP4", "VAR1", "VAR22"), ])
+data044 <- dcast(data=chk999,
+                 Source + TMP1 + TMP3 + TMP4 ~ VAR1,
+                 fill=" ",
+                 value.var = c("VAR22"))
+
+
 
 # @D4
 data <- fread("grep '@@D4@' c:/Users/Lucky/Documents/Hospital_data/04_2017_DOWNLOAD/pat_txts_mod/all_data022.txt",
               sep="!", 
               header= FALSE)
 
-data02 <- data [, c("TMP1", "TMP2", "TMP3", "TMP4", "TMP5") := tstrsplit(stri_trim(V1), "@", fixed=TRUE),]
+data0 <- data [!V1 %like% c("<><>")]
+
+data02 <- data0 [, c("TMP1", "TMP2", "TMP3", "TMP4", "TMP5") := tstrsplit(stri_trim(V1), "@", fixed=TRUE),]
 
 # Fix the problems with the file
+data02 <- data02[, .(V1, TMP1, TMP2, TMP3, TMP4, TMP5,  
+                     splitted =unlist(strsplit(TMP5, "><"))) ,
+                 by=seq_len(nrow(data02))]
 
-data03 <- data02 [, c("VAR1","VAR2") := tstrsplit(stri_trim(TMP5), "<>", fixed=TRUE), ]
-data03 <- data03 [, `:=`(VAR1 = stri_replace_all(toupper(VAR1), fixed = " ",""),
+data03 <- data02 [, c("VAR1","VAR2") := tstrsplit(stri_trim(splitted), "<>", fixed=TRUE), ]
+data03 <- data03 [, `:=`(VAR1 = stri_replace_all(VAR1, fixed = " ",""),
                          Source = substr(TMP1, 26, 33)),]
 
 chk <- data03[, cnt :=1:.N, by =.(TMP1, VAR1)]
@@ -114,6 +163,14 @@ data04 <- dcast(data=chk,
                 Source + cnt + TMP1 + TMP3 + TMP4 ~ VAR1,
                 fill=" ",
                 value.var = c("VAR2"))
+
+chk99 <- chk [, VAR22 := paste(VAR2, collapse = ","), by =.(TMP1, VAR1)]
+chk999 <- unique( chk99 [, c("Source", "TMP1", "TMP3", "TMP4", "VAR1", "VAR22"), ])
+data044 <- dcast(data=chk999,
+                 Source + TMP1 + TMP3 + TMP4 ~ VAR1,
+                 fill=" ",
+                 value.var = c("VAR22"))
+
 
 # @D5
 data <- fread("grep '@@D5@' c:/Users/Lucky/Documents/Hospital_data/04_2017_DOWNLOAD/pat_txts_mod/all_data022.txt",
@@ -138,6 +195,13 @@ data04 <- dcast(data=chk,
                 fill=" ",
                 value.var = c("VAR2"))
 
+
+chk99 <- chk [, VAR22 := paste(VAR2, collapse = ","), by =.(TMP1, VAR1)]
+chk999 <- unique( chk99 [, c("Source", "TMP1", "TMP3", "TMP4", "VAR1", "VAR22"), ])
+data044 <- dcast(data=chk999,
+                Source + TMP1 + TMP3 + TMP4 ~ VAR1,
+                fill=" ",
+                value.var = c("VAR22"))
 
 # @@D7@
 # Need programming lines for splitting "nidan values from Rogibala"
