@@ -67,6 +67,32 @@ write.table(chk471$code,
             quote= FALSE)
 
 # Run the following codes in Unix
+# Convert the file to an executable file
 # dos2unix awk_diag.sh
-# Convert the file to an executable file chmod 777 awk_diag.sh
+# chmod 777 awk_diag.sh
 # bash awk_diag.sh
+
+# Run the AWK code to get all the aligned files into 1 file
+find . -name "aligndiag*"|xargs awk '{print FILENAME "@" $0}' >all_aligndiag.txt
+
+all_dose <- fread("D:\\Hospital_data\\04_2017_DOWNLOAD\\pat_txts_diagnosis\\all_aligndiag.txt",
+                  header=F, 
+                  sep="@",
+                  fill=TRUE)
+
+all_dose0 <- all_dose [V2 != "Diag__Type"]
+#all_dose01 <- all_dose0 [nzchar(V2) & nzchar(V3) & nzchar(V4) & nzchar(V5)]
+
+all_dose01 <- all_dose0 [ stri_trim(V2) != "" & stri_trim(V3) != "" & stri_trim(V4) != "" ]
+all_dose01 <- unique( all_dose01)
+
+all_dose01 <- all_dose01 [ , cnt :=1:.N, by =.(V1, V2)]
+all_dose01 <- all_dose01 [, `:=` (MRNo = substr(V1, 31, 38),
+                                  Visit = substr(V1, 40, 43),
+                                  Date = substr(V1, 45, 53)), ]
+
+fwrite(all_dose, 
+       "D:\\Hospital_data\\04_2017_DOWNLOAD\\pat_dbs\\adiag.csv", 
+       row.names=FALSE, 
+       col.names=FALSE)
+
