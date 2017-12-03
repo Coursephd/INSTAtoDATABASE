@@ -59,8 +59,8 @@ chk47 <- chk46[, c("TMP1", "TMP2", "TMP3") := tstrsplit(FNAME, "/", fixed=TRUE),
 chk470 <- chk47 [, `:=` (awkst1 = "gawk 'BEGIN {FIELDWIDTHS=\"",
                          awkst2 = '"; OFS ="@";} { print $1, $2, $3, $4, $5, $6;}',
                          awkst3 = "' ",
-                         awkst4 = paste( "dose_", substr(TMP3, 9, 70), sep=""),
-                         awkst5 = paste( "aligndose_", substr(TMP3, 9, 50), sep="" )),]
+                         awkst4 = paste( "dose_", substr(TMP3, 8, 70), sep=""),
+                         awkst5 = paste( "aligndose_", substr(TMP3, 8, 50), sep="" )),]
 
 chk471 <- chk470 [, code := paste(awkst1, text, awkst2, awkst3, TMP2, "/", awkst4, "> ", TMP2, "/", awkst5, sep = ""),]
 
@@ -74,7 +74,7 @@ write.table(chk471$code,
 # Convert the file to an executable file
 # dos2unix awk_dose.sh
 # chmod 777 awk_dose.sh
-# bash awk_dose.sh
+# time bash awk_dose.sh
 
 # Run the AWK code to get all the aligned files into 1 file
 find . -name "aligndose*"|xargs awk '{print FILENAME "@" $0}' >all_aligndose.txt
@@ -128,7 +128,7 @@ all_dose6 <- all_dose5[, `:=`(patid =substr(all_dose5$Source, 1, 38),
                               Dosage = paste("'", Dosage, sep="")), ]
 
 fwrite(all_dose6, 
-       "C:\\Users\\Lucky\\Documents\\Hospital_data\\04_2017_DOWNLOAD\\pat_dbs\\all_dose6.csv", 
+       "D:\\Hospital_data\\04_2017_DOWNLOAD\\pat_dbs\\all_dose6.csv", 
        row.names=FALSE, 
        col.names=FALSE,
        quote="auto")
