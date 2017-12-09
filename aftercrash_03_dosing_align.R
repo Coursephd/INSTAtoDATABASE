@@ -17,8 +17,12 @@ done
 
 # Execute the following command to get the field width files into 1 file
 #/cygdrive/d/Hospital_data/04_2017_DOWNLOAD/pat_txts_dosing
+# Use tail fwdose_all.txt to check
+# Remove fwdose02_all.txt before re-creating fwdose_all.txt
+
 find . -name "fwdose*"|xargs awk '{print FILENAME, $0}' > fwdose_all.txt
 cat fwdose_all.txt |tr -s "\t" " " > fwdose02_all.txt
+
 
 # The following patients have "@"
 # Replaced @ by 2, 36911
@@ -33,13 +37,15 @@ $ find . -name "dose*"|xargs grep "@"|cat -n
 6  ./MR034001_MR035000/dose_MR034144_0006_10OCT2015_3.txt:                                                                                          1drop each nostril twice daily.@tsf
 7  ./MR036001_MR037000/dose_MR036911_0002_05DEC2015_3.txt:5      Prandhara Drops 3ml - Maharishi                            15          1         @ drops to the nostirls
 
+# Problem with the first file so had to update the AWK script manually
+
 library(data.table)
 library(zoo)
 library(stringi)
 library(stringr)
-library(openxlsx)
+#library(openxlsx)
 
-dta <- fread("D:\\Hospital_data\\04_2017_DOWNLOAD\\pat_txts_dosing\\fwdose02_all.txt", 
+dta <- fread("/d/Hospital_data/04_2017_DOWNLOAD/pat_txts_dosing/fwdose02_all.txt", 
              header=F)
 
 setnames(dta, "V1", "FNAME")
@@ -83,7 +89,7 @@ find . -name "aligndose*"|xargs awk '{print FILENAME "@" $0}' >all_aligndose.txt
 # Copy Medicine name in blank lines
 #
 
-all_dose <- fread("D:\\Hospital_data\\04_2017_DOWNLOAD\\pat_txts_dosing\\all_aligndose.txt",
+all_dose <- fread("d:/Hospital_data/04_2017_DOWNLOAD/pat_txts_dosing/all_aligndose.txt",
                   header=F, 
                   sep="@")
 
@@ -115,10 +121,15 @@ all_dose3 <- all_dose02 [ , `:=` (V30 = paste(V3, collapse=" "),
                                   V70 = paste(V7, collapse=" ") ), by =.(V1, newv4)]
 all_dose4 <- all_dose3[ , c("V1", "newv4", "V30", "V40", "V50", "V60", "V70" ), with =FALSE]
 all_dose5 <- unique( all_dose4 )
+
+
+all_dose5 <- all_dose5[, c("tmp1v4", "tmp2v4") := tstrsplit( gsub("\\s+", " ", str_trim(newv4)), " ", fill="") , ]
+all_dose5 <- all_dose5 [, V30new := ifelse ( tmp2v4 == "", str_trim(V30), str_trim(paste(tmp2v4,V30, sep="")) ) ,]
+
 setnames(all_dose5, "V1", "Source")
-setnames(all_dose5, "newv4", "Group")
+setnames(all_dose5, "tmp1v4", "Group")
 #setnames(all_dose5, "V20", "Sl.No")
-setnames(all_dose5, "V30", "Medicine_Name")
+setnames(all_dose5, "V30new", "Medicine_Name")
 setnames(all_dose5, "V40", "Dosage")
 setnames(all_dose5, "V50", "Days")
 setnames(all_dose5, "V60", "Qty")
@@ -126,6 +137,10 @@ setnames(all_dose5, "V70", "Remarks")
 
 all_dose6 <- all_dose5[, `:=`(patid =substr(all_dose5$Source, 1, 38),
                               Dosage = paste("'", Dosage, sep="")), ]
+
+all_dose6 <- all_dose6 [, -c("newv4", "V30", "tmp2v4"), ]
+saveRDS(all_dose6, "d:/Hospital_data/04_2017_DOWNLOAD/pat_dbs/adose.rds")
+
 
 fwrite(all_dose6, 
        "D:\\Hospital_data\\04_2017_DOWNLOAD\\pat_dbs\\all_dose6.csv", 
