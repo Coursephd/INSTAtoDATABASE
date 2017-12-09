@@ -91,6 +91,8 @@ all_dose01 <- all_dose01 [, `:=` (MRNo = substr(V1, 31, 38),
                                   Visit = substr(V1, 40, 43),
                                   Date = substr(V1, 45, 53)), ]
 
+saveRDS(all_dose01, "d:/Hospital_data/04_2017_DOWNLOAD/pat_dbs/adiag.rds")
+
 fwrite(all_dose, 
        "D:\\Hospital_data\\04_2017_DOWNLOAD\\pat_dbs\\adiag.csv", 
        row.names=FALSE, 
