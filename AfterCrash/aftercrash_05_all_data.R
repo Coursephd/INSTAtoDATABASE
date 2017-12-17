@@ -49,9 +49,18 @@ subdata <- function (xsub = '@@D@8', dataout ="D8")
 
 subdata('@@D1@', "D1")
 subdata('@@D2@', "D2")
+subdata('@@D3@', "D3")
+subdata('@@D4@', "D4")
+subdata('@@D5@', "D5")
 
-
+subdata('@@D6@', "D6")
+subdata('@@D7@', "D7")
 subdata('@@D8@', "D8")
+subdata('@@D9@', "D9")
+subdata('@@D10@', "D10")
+
+subdata('@@D11@', "D11")
+subdata('@@D12@', "D12")
 
 dd <- data.table (readRDS("d:/Hospital_data/04_2017_DOWNLOAD/pat_dbs/D8.rds") )
 
