@@ -204,6 +204,9 @@ setnames(compare, "outfld.x", "outfld")
 compare2 <- compare[, c("Source", "outfld", "outxls", "planned", "sourcepdf", "sourcetxt", "modtxt", "diagtxt", "dosingtxt", "Noofurls"), ]
 compare2 <- compare2[, URLS :=ifelse(Noofurls == "6", "NODATA", "DATA-AVAILABLE"), ]
 
+fwrite(compare2, file ="d:\\Hospital_data\\04_2017_DOWNLOAD\\pat_dbs\\99tracker.csv")
+                
+
 # Count the number of patients having data available, vs. no data
 summary <- compare2[, .(cnt = uniqueN(Source)), by =.(outfld, URLS)]
 summary2 <- dcast(data = summary, 
