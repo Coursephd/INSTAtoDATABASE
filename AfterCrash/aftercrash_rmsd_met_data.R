@@ -90,10 +90,10 @@ diag2 <- merge(x=diag2,
 
 
 # Create date variables and find the difference
-diag2 <- diag2[, visdate := as.POSIXct( gsub("-", "/", visdate), format="%d/%m/%Y") ]
+diag2 <- diag2[, visdate0 := as.POSIXct( gsub("-", "/", visdate), format="%d/%m/%Y") ]
 #diag2 <- diag2[, fvisdate := as.POSIXct( gsub("-", "/", fvisdate), format="%d/%m/%Y") ]
 
-diag2 <- diag2[, visday := round( as.Date(visdate) - as.Date(mindt) + 1, 0)]
+diag2 <- diag2[, visday := round( as.Date(visdate0) - as.Date(mindt) + 1, 0)]
 
 diag2 <- diag2[, vismon := round(visday /30.4375, 1)]
 diag2 <- diag2[, Age := ifelse(AgeIn =="M", Age/12, Age), ]
@@ -108,7 +108,7 @@ diag2 <- diag2[ , noofdis := uniqueN(Code2), by = .(MRNo) ]
 
 # Count number of unique diagnosis per patient per day
 # Sort the data by patient and day
-diag2 <- diag2[ , `:=` (IDX = 1: .N), by = .(MRNo, visdate, visday) ] [order(MRNo, visday, IDX, Code2)]
+diag2 <- diag2[ , `:=` (IDX = 1: .N), by = .(MRNo, visdate0, visday) ] [order(MRNo, visday, IDX, Code2)]
 
 # Get the first date of the diagnosis by each code
 diag2 <- diag2 [, min := min(visday), by = .(MRNo, Code2)]
@@ -205,7 +205,7 @@ adsl <- Reduce(function(...) merge(..., all = TRUE, by = "MRNo"),
 rmsd_met <- Reduce(function(...) merge(..., all.x = TRUE, by = "MRNo"),
                    list(subset5, adsl))
 
-rmsd_met2 <- rmsd_met[, -c("date", "Patient Id", "cal", "fvisdate"), with = FALSE]
+rmsd_met2 <- rmsd_met[combine >0, -c("date", "Patient Id", "cal", "fvisdate", "visdate"), with = FALSE]
 fwrite(rmsd_met2, 
        "D:\\Hospital_data\\04_2017_DOWNLOAD\\pat_dbs\\rmsd_met_adsl.csv", 
        row.names=FALSE,
