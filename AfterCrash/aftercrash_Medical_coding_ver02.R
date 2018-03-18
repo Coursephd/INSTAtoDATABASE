@@ -1,5 +1,5 @@
 
-#library(dplyr)
+library(dplyr)
 library(data.table)
 library(fuzzyjoin)
 library(stringr)
@@ -16,9 +16,47 @@ row_all <- fread( "grep @@D10@ D:\\Hospital_data\\04_2017_DOWNLOAD\\pat_txts_mod
                   header= FALSE)
 
 row_all0 <- row_all[, c("VAR1","VAR2", "VAR3", "VAR4", "VAR5", "VAR6") := tstrsplit(stri_trim(V1), "@", fixed=TRUE), ]
-row_all02 <- row_all0[, .(V1, VAR1, VAR2, VAR3, VAR4, VAR5, VAR6,  
-                          splitted =unlist(strsplit(VAR5, "[[:punct:]]", perl=TRUE))) ,
-                          by=seq_len(nrow(row_all0))]
+
+row_all01 <- row_all0 [ VAR4 %in% c('ASSOCIATED SIGNS SYMPTOMS', 'ADDITIONAL COMPLAINT', 'ALLERGIC_IMMUNOLOGIC', 'ASSOCIATED SYMPTOMS', 'HISTORY OF PAST ILLNESS', 'OTHER COMPLAINT', 'HEMOTOLOGICAL_LYMPHATIC',  'MAIN COMPLAINTS', 'PAST HISTORY', 'ASSOCIATED_ILLNESS_UPASHAYA_ANUPASHAYA', 'PSYCHOLOGICAL OCCUPATIONAL HISTORY', 'HISTORY OF PRESENT ILLNESS', 'CHIEF COMPLAINT DURATION', 'FAMILY HISTORY', 'SURGICAL HISTORY', 'DIAGNOSTIC HISTORY', 'ALLOPATHIC DIAGNOSIS', 'ASSOCIATED COMPLAINT WITH ONSET DURATION', 'CHIEF COMPLAINT', 'MEDICAL HISTORY', 'CHIEF COMPLAINT WITH ONSET DURATION', 'COMPLAINT' )]
+
+row_all02 <- row_all01[, .(V1, VAR1, VAR2, VAR3, VAR4, VAR5, VAR6,  
+                           splitted =unlist(strsplit(VAR5, "[[:punct:]]", perl=TRUE))) ,
+                       by=seq_len(nrow(row_all01))]
+
+
+med_rm <- fread("D:\\Hospital_data\\04_2017_DOWNLOAD\\prgm\\medical_remove.txt")
+med_rm <- med_rm [ ,  V30 := paste("\\b", str_trim(word), collapse="\\b|", sep="")]
+med_rm2 <- unique(med_rm$V30)
+
+row_all03 <- row_all02 [, VAR500 := gsub(med_rm2, "<>", splitted),]
+row_all04 <- row_all03[, .(V1, VAR1, VAR2, VAR3, VAR4, VAR5, VAR6,  
+                           VAR600 =unlist(strsplit(VAR500, "<>", perl=TRUE))) ,
+                       by=seq_len(nrow(row_all03))]
+row_all04 <- row_all04 [VAR600 != " "]
+
+
+
+replacev <- c("\\bWEEK\\b|\\bSINCE\\b|\\bAND\\b|\\bIN\\b|\\WITH\\b|AGO|YEARS|FROM|C/O|CONSULTED|PHYSICIAN| THE | ASSOCIATED | DAYS | YRS | IS | WHILE | ONCE | PERSISTS | BY | REDUCED| MONTHS")
+row_all_try <- row_all01 [, VAR500 := gsub(replacev, "#", VAR5),]
+
+
+replacev <- c("WEEK|SINCE|( AND )| IN |AGO|YEARS|FROM|C/O|CONSULTED|PHYSICIAN| THE | ASSOCIATED | DAYS | YRS | IS | WHILE | ONCE | PERSISTS | BY | REDUCED| MONTHS")
+row_all_try <- row_all01 [, VAR500 := gsub(replacev, "#", VAR5),]
+
+
+
+
+try <- c ("WEEK", "SINCE", "AND", "AGO", "YEARS", "FROM", "C/O")
+try <- data.table(try)
+try2 <- try [ ,  V30 := paste("\\b", str_trim(try), collapse="\\b|", sep="")]
+
+
+replacev <- c("YEARS")
+row_all_try <- row_all[VAR5 %like% c("YEARS")]
+row_all_try2 <- row_all_try[, VAR500 := gsub(replacev, "#", VAR5),]
+
+row_all_try <- row_all [, VAR500 := str_replace_all(VAR5, replacev, "#"),]
+
 
 row_uniq <- data.table ( VAR55 = unique( row_all02$splitted) ) [order(VAR55)]
 row_const <- row_uniq[ VAR55 %like% c("CONSTIPATION") | VAR55 %like% c("COLD")]
