@@ -9,7 +9,8 @@ icd10 <- fread("D:\\Hospital_data\\04_2017_DOWNLOAD\\pat_dbs\\icd10cm_codes_2018
 icd10_1 <- icd10[, c("VAR1","VAR5") := tstrsplit(stri_replace_first_fixed(V1, " ", "<>"), "<>", fixed=TRUE), ]
 
 icd10_1 <- icd10_1 [, VAR55 :=toupper(V1)]
-icd_const <- icd10_1[ VAR55 %like% c("CONSTIPATION") | VAR55 %like% c("COLD") ]
+
+icd_const <- icd10_1[ VAR55 %like% c("WEIGHT") | VAR55 %like% c("COLD") ]
 
 row_all <- fread( "grep @@D10@ D:\\Hospital_data\\04_2017_DOWNLOAD\\pat_txts_mod\\row_all02.txt", 
                   sep="\t", 
@@ -30,36 +31,11 @@ med_rm2 <- unique(med_rm$V30)
 
 row_all03 <- row_all02 [, VAR500 := gsub(med_rm2, "<>", splitted),]
 row_all04 <- row_all03[, .(V1, VAR1, VAR2, VAR3, VAR4, VAR5, VAR6,  
-                           VAR600 =unlist(strsplit(VAR500, "<>", perl=TRUE))) ,
+                           VAR55 =unlist(strsplit(VAR500, "<>", perl=TRUE))) ,
                        by=seq_len(nrow(row_all03))]
-row_all04 <- row_all04 [VAR600 != " "]
+row_all04 <- row_all04 [VAR55 != " "]
 
-
-
-replacev <- c("\\bWEEK\\b|\\bSINCE\\b|\\bAND\\b|\\bIN\\b|\\WITH\\b|AGO|YEARS|FROM|C/O|CONSULTED|PHYSICIAN| THE | ASSOCIATED | DAYS | YRS | IS | WHILE | ONCE | PERSISTS | BY | REDUCED| MONTHS")
-row_all_try <- row_all01 [, VAR500 := gsub(replacev, "#", VAR5),]
-
-
-replacev <- c("WEEK|SINCE|( AND )| IN |AGO|YEARS|FROM|C/O|CONSULTED|PHYSICIAN| THE | ASSOCIATED | DAYS | YRS | IS | WHILE | ONCE | PERSISTS | BY | REDUCED| MONTHS")
-row_all_try <- row_all01 [, VAR500 := gsub(replacev, "#", VAR5),]
-
-
-
-
-try <- c ("WEEK", "SINCE", "AND", "AGO", "YEARS", "FROM", "C/O")
-try <- data.table(try)
-try2 <- try [ ,  V30 := paste("\\b", str_trim(try), collapse="\\b|", sep="")]
-
-
-replacev <- c("YEARS")
-row_all_try <- row_all[VAR5 %like% c("YEARS")]
-row_all_try2 <- row_all_try[, VAR500 := gsub(replacev, "#", VAR5),]
-
-row_all_try <- row_all [, VAR500 := str_replace_all(VAR5, replacev, "#"),]
-
-
-row_uniq <- data.table ( VAR55 = unique( row_all02$splitted) ) [order(VAR55)]
-row_const <- row_uniq[ VAR55 %like% c("CONSTIPATION") | VAR55 %like% c("COLD")]
+row_const <- row_all04[ VAR55 %like% c("WEIGHT") | VAR55 %like% c("COLD")]
 
 try <- stringdist_inner_join(x = row_const,
                              y = icd_const,
@@ -72,7 +48,9 @@ try <- stringdist_inner_join(x = row_const,
 try1 <- try [order(VAR55.x, dist ) ]
 try2 <- try1 [, disgrp := 1:.N, by =.(VAR55.x)] 
 
-try3 <- dcast (data=try2,
-               VAR55.x ~ paste( "dis", str_pad(disgrp, 3, side = "left", pad = 0), sep=""),
+try20 <- try2 [ disgrp <= 15]
+
+try3 <- dcast (data=try20,
+               VAR4 + VAR55.x ~ paste( "dis", str_pad(disgrp, 3, side = "left", pad = 0), sep=""),
                fill=" ",
-               value.var = c("V1"))
+               value.var = c("VAR55.y"))
