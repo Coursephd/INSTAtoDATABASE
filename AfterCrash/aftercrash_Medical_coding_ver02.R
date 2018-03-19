@@ -4,6 +4,7 @@ library(data.table)
 library(fuzzyjoin)
 library(stringr)
 library(stringi)
+library(stringdist)
 
 icd10 <- fread("D:\\Hospital_data\\04_2017_DOWNLOAD\\pat_dbs\\icd10cm_codes_2018.txt", sep="\t", header= FALSE)
 icd10_1 <- icd10[, c("VAR1","VAR5") := tstrsplit(stri_replace_first_fixed(V1, " ", "<>"), "<>", fixed=TRUE), ]
@@ -37,6 +38,11 @@ row_all04 <- row_all04 [VAR55 != " "]
 
 row_const <- row_all04[ VAR55 %like% c("WEIGHT") | VAR55 %like% c("COLD")]
 
+try <- amatch(x = row_const,
+              table = icd_const,
+              method = "jw",
+              maxDist = .3)
+
 try <- stringdist_inner_join(x = row_const,
                              y = icd_const,
                              by = "VAR55",
@@ -54,3 +60,42 @@ try3 <- dcast (data=try20,
                VAR4 + VAR55.x ~ paste( "dis", str_pad(disgrp, 3, side = "left", pad = 0), sep=""),
                fill=" ",
                value.var = c("VAR55.y"))
+
+
+
+try_osa <- stringdist_inner_join(x = row_const,
+                             y = icd_const,
+                             by = "VAR55",
+                             ignore_case = TRUE,
+                             method = c("osa") ,
+                             max_dist=10,
+                             distance_col = "dist")
+
+
+try_qgram <- stringdist_inner_join(x = row_const,
+                             y = icd_const,
+                             by = "VAR55",
+                             ignore_case = TRUE,
+                             method = c("qgram") ,
+                             max_dist=20,
+                             distance_col = "dist")
+
+
+try_cosine <- stringdist_inner_join(x = row_const,
+                                   y = icd_const,
+                                   by = "VAR55",
+                                   ignore_case = TRUE,
+                                   method = c("cosine") ,
+                                   max_dist=.3,
+                                   distance_col = "dist") 
+try1 <- try_cosine[, c("seq_len", "V1.x", "VAR3", "VAR4", "VAR55.x", "VAR55.y","dist" )]
+try1 <- try1 [order(seq_len, V1.x, VAR55.x, dist ) ]
+try2 <- try1 [, disgrp := 1:.N, by =.(seq_len, V1.x, VAR55.x)] 
+
+try20 <- try2 [ disgrp <= 15]
+
+try3 <- dcast (data=try20,
+               seq_len + V1.x +VAR55.x ~ paste( "dis", str_pad(disgrp, 3, side = "left", pad = 0), sep=""),
+               fill=" ",
+               value.var = c("VAR55.y"))
+
